@@ -17,28 +17,63 @@ app.get('/customers', (req, res)=> {
 
     connection.query(sql, (error, result) => {
         if (error) throw error;
+
         if (result.length > 0){
             res.json(result);
         } else {
-            res.send('No Data');
+            res.send('Not result');
         }
     });
 });
 
 app.get('/customers/:id', (req, res)=> {
-    res.send("Get customers by id");
+    const {id}= req.params;
+    const sql = `SELECT * FROM customers WHERE id = ${id}`;
+
+    connection.query(sql, (error, result) => {
+        if (error) throw error;
+
+        if (result.length > 0){
+            res.json(result);
+        } else {
+            res.send('Not result');
+        }
+    });
 });
 
 app.post('/add', (req, res)=> {
-    res.send("New customers");
+    const sql = 'INSERT INTO customers SET ?';
+
+    const customerObj = {
+        name: req.body.name,
+        city: req.body.city
+    };
+
+    connection.query(sql, customerObj, error => {
+        if (error) throw error;
+        res.send('Customer created');
+    });
 });
 
 app.put('/update/:id', (req, res)=> {
-    res.send("Update customer");
+    const {id}= req.params;
+    const {name, city}= req.body;
+    const sql = `UPDATE customers SET name = '${name}', city = '${city}' WHERE id = '${id}'`;
+
+    connection.query(sql, error => {
+        if (error) throw error;
+        res.send('Customer updated');
+    });
 });
 
 app.delete('/delete/:id', (req, res)=> {
-    res.send("Delete customer");
+    const {id}= req.params;
+    const sql = `DELETE FROM customers WHERE id = '${id}'`;
+
+    connection.query(sql, error => {
+        if (error) throw error;
+        res.send('Customer deleted');
+    });
 });
 
 
